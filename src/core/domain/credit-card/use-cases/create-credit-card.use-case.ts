@@ -1,5 +1,5 @@
+import { CreditCardRepositoryContract } from '../contract/credit-card-repository.contract';
 import { CreditCard, CreditCardProps } from '../credit-card.entity';
-import { CreditCardRepositoryContract } from '../repositories/credit-card-repository.contract';
 
 export class CreateCreditCardUseCase {
   constructor(
