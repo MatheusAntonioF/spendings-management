@@ -5,13 +5,15 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ProcessCSVService } from '../services/processCsvService';
 
 @Controller('spendings')
 export class SpendingController {
+  constructor(private readonly processCsvService: ProcessCSVService) {}
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log('🚀 ~ file:', file);
-    return 'teste';
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    await this.processCsvService.execute({ file });
   }
 }
