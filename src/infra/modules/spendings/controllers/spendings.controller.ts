@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Post,
   UploadedFile,
@@ -6,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProcessCSVService } from '../services/processCsvService';
+import { ProcessCsvSpendingsDTO } from '../dtos/processCsvSpendings.dto';
 
 @Controller('spendings')
 export class SpendingController {
@@ -13,7 +15,11 @@ export class SpendingController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    await this.processCsvService.execute({ file });
+  async uploadFile(
+    @Body() body: ProcessCsvSpendingsDTO,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    console.log('🚀 ~ body:', body);
+    await this.processCsvService.execute({ file, keysToMap: body.keysToMap });
   }
 }
