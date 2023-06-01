@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model CreditCard {
+  id                String              @id @default(cuid()) @map("_id") @db.ObjectId
+  CreditCardInvoice CreditCardInvoice[]
+}
+
+model CreditCardInvoice {
+  id           String     @id @default(cuid()) @map("_id") @db.ObjectId
+  date         DateTime
+  creditCard   CreditCard @relation(fields: [creditCardId], references: [id])
+  creditCardId String     @db.ObjectId
+  spendings    Spending[]
+}
+
+model Spending {
+  id                  String             @id @default(cuid()) @map("_id") @db.ObjectId
+  category            Category           @relation(fields: [categoryId], references: [id])
+  categoryId          String             @db.ObjectId
+  CreditCardInvoice   CreditCardInvoice? @relation(fields: [creditCardInvoiceId], references: [id])
+  creditCardInvoiceId String?            @db.ObjectId
+}
+
+model Category {
+  id       String     @id @default(cuid()) @map("_id") @db.ObjectId
+  Spending Spending[]
+}
