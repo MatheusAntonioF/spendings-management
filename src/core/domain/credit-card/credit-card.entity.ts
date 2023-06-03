@@ -26,4 +26,8 @@ export class CreditCard {
   get color(): string {
     return this.props.color;
   }
+
+  get createdAt(): Date | null {
+    return this.props.createdAt;
+  }
 }

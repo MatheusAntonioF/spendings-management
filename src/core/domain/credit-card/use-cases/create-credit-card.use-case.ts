@@ -1,20 +1,27 @@
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { CreditCardRepositoryContract } from '../contract/credit-card-repository.contract';
 import { CreditCard, CreditCardProps } from '../credit-card.entity';
+import { creditCardExceptions } from './exceptions/credit-card.exceptions';
 
+@Injectable()
 export class CreateCreditCardUseCase {
   constructor(
+    @Inject('CreditCardRepository')
     private readonly creditCardRepository: CreditCardRepositoryContract,
   ) {}
 
-  async execute(creditCard: CreditCardProps): Promise<CreditCard> {
+  async execute({ name, color }: CreditCardProps): Promise<CreditCard> {
     try {
-      const createdCreditCard = await this.creditCardRepository.create(
-        creditCard,
-      );
+      const creditCard = new CreditCard({ name, color });
 
-      return createdCreditCard;
+      await this.creditCardRepository.create(creditCard);
+
+      return creditCard;
     } catch (error) {
-      console.error(error);
+      throw new HttpException(
+        creditCardExceptions.FAIL_TO_CREATE_CREDIT_CARD,
+        400,
+      );
     }
   }
 }

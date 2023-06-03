@@ -1,6 +1,6 @@
-import { CreditCard, CreditCardProps } from '../credit-card.entity';
+import { CreditCard } from '../credit-card.entity';
 
 export interface CreditCardRepositoryContract {
-  create(data: CreditCardProps): Promise<CreditCard>;
+  create(data: CreditCard): Promise<void>;
   delete(id: string): Promise<void>;
 }
