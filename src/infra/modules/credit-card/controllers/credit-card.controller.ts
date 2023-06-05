@@ -1,12 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { CreateCreditCardDto } from '../dtos/create-credit-card.dto';
 import { CreateCreditCardUseCase } from 'src/core/domain/credit-card/use-cases/create-credit-card.use-case';
 import { CreditCardMapper } from '../mappers/credit-card.mapper';
+import { DeleteCreditCardUseCase } from 'src/core/domain/credit-card/use-cases/delete-credit-card.use-case';
 
 @Controller('credit-card')
 export class CreditCardController {
   constructor(
     private readonly createCreditCardUseCase: CreateCreditCardUseCase,
+    private readonly deleteCreditCardUseCase: DeleteCreditCardUseCase,
   ) {}
 
   @Post()
@@ -15,8 +17,11 @@ export class CreditCardController {
       createCreditCardDto,
     );
 
-    const teste = CreditCardMapper.toHttp(createdCreditCard);
+    return CreditCardMapper.toHttp(createdCreditCard);
+  }
 
-    return teste;
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    await this.deleteCreditCardUseCase.execute(id);
   }
 }
