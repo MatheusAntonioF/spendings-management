@@ -1,6 +1,9 @@
-import { IsNotEmptyObject } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class ProcessCsvSpendingsDTO {
-  @IsNotEmptyObject()
+  @IsNotEmpty()
   keysToMap: string;
+
+  @IsUUID()
+  creditCardId: string;
 }

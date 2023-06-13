@@ -5,9 +5,10 @@ import { PrismaModule } from '../database/prisma.module';
 import { CategoryController } from './controllers/category.controller';
 import { CategoryPrismaRepository } from './repositories/category-prisma.repository';
 import { CreateCategoryUseCase } from 'src/core/domain/spending/use-cases/create-category.use-case';
+import { CreditCardModule } from '../credit-card/credit-card.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CreditCardModule],
   controllers: [SpendingController, CategoryController],
   providers: [
     ProcessCSVService,

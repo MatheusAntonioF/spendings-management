@@ -16,5 +16,11 @@ import { DeleteCreditCardUseCase } from 'src/core/domain/credit-card/use-cases/d
     CreateCreditCardUseCase,
     DeleteCreditCardUseCase,
   ],
+  exports: [
+    {
+      provide: 'CreditCardRepository',
+      useClass: CreditCardPrismaRepository,
+    },
+  ],
 })
 export class CreditCardModule {}
