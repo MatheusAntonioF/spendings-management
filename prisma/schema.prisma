@@ -33,6 +33,7 @@ model CreditCardInvoice {
 
 model Spending {
   id                  String             @id @map("_id")
+  name                String
   price               Float
   purchaseDate        DateTime
   currentInstallment  Int?

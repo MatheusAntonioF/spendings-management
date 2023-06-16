@@ -3,6 +3,8 @@ import { Readable } from 'node:stream';
 import { ParseStepResult, parse } from 'papaparse';
 import { parse as dateFnsParse } from 'date-fns';
 import { CreditCardRepositoryContract } from 'src/core/domain/credit-card/contract/credit-card-repository.contract';
+import { CreditCardInvoice } from 'src/core/domain/credit-card/credit-card-invoice.entity';
+import { Spending } from 'src/core/domain/spending/spending.entity';
 interface Input {
   keysToMap: string;
   file: Express.Multer.File;
@@ -26,6 +28,14 @@ export class ProcessCSVService {
         throw new HttpException('Credit card not found', 400);
       }
 
+      const creditCardInvoice = new CreditCardInvoice({
+        date: new Date(),
+        creditCard: foundCreditCard,
+        spendings: [],
+      });
+
+      const createdSpendings: Spending[] = [];
+
       const stream = Readable.from(file.buffer);
 
       await new Promise<void>((resolve, reject) => {
@@ -40,7 +50,6 @@ export class ProcessCSVService {
         });
       });
     } catch (error) {
-      console.log('🚀 ~ error:', error);
       throw new HttpException(error.message, 400);
     }
   }
@@ -49,15 +58,10 @@ export class ProcessCSVService {
     data: Record<string, string>,
     keysToMap: string,
   ): Record<string, string> {
-    console.log('🚀 ~ keysToMap:', keysToMap, typeof keysToMap);
-    console.log('🚀 ~ data:', data);
-
     const parsedKeys: Record<string, string> = JSON.parse(keysToMap);
 
     const mappedKeys = Object.entries(parsedKeys).reduce(
       (accumulator, currentObj) => {
-        console.log('🚀 ~ currentObj:', currentObj);
-
         const [internalKey, csvKey] = currentObj;
 
         accumulator[internalKey] = this.parseValue(internalKey, data[csvKey]);
@@ -72,7 +76,9 @@ export class ProcessCSVService {
 
   parseValue(key: string, value: string) {
     if (key === 'price') {
-      return String(value).replace(/[^\d]+/g, '');
+      const parsedString = String(value).replace(/[^\d]+/g, '');
+
+      return isNaN(Number(parsedString)) ? 0 : Number(parsedString);
     }
 
     if (key === 'purchaseDate') {

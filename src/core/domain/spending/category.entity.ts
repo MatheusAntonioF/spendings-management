@@ -9,6 +9,10 @@ export interface CategoryProps {
   createdAt?: Date;
 }
 
+export interface ExistentCategoryProps extends CategoryProps {
+  id: string;
+}
+
 export class Category {
   private _id: string;
   private props: CategoryProps;

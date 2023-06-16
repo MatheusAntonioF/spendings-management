@@ -6,8 +6,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ProcessCSVService } from '../services/processCsvService';
-import { ProcessCsvSpendingsDTO } from '../dtos/processCsvSpendings.dto';
+import { ProcessCSVService } from '../services/process-csv-service';
+import { ProcessCsvSpendingsDTO } from '../dtos/process-csv-spendings.dto';
 
 @Controller('spendings')
 export class SpendingController {

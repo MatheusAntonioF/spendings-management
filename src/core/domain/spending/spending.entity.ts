@@ -1,4 +1,4 @@
-import { CategoryProps } from './category.entity';
+import { ExistentCategoryProps } from './category.entity';
 import { InstallmentProps } from './installment.entity';
 
 export interface SpendingProps {
@@ -6,8 +6,9 @@ export interface SpendingProps {
   price: number;
   purchaseDate: Date;
   installment: InstallmentProps;
-  category: CategoryProps;
+  category: ExistentCategoryProps;
   createdAt?: Date | null;
+  creditCardInvoiceId?: string | null;
 }
 
 export class Spending {
@@ -31,6 +32,10 @@ export class Spending {
     this.props.name = name;
   }
 
+  get purchaseDate(): Date {
+    return this.props.purchaseDate;
+  }
+
   get price(): number {
     return this.props.price;
   }
@@ -39,7 +44,19 @@ export class Spending {
     this.props.price = price;
   }
 
-  get category(): CategoryProps {
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get category(): ExistentCategoryProps {
     return this.props.category;
+  }
+
+  get creditCardInvoiceId(): string | null {
+    return this.props.creditCardInvoiceId;
+  }
+
+  set creditCardInvoiceId(data: string) {
+    this.props.creditCardInvoiceId = data;
   }
 }

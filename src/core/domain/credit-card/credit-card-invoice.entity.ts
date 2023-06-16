@@ -32,4 +32,8 @@ export class CreditCardInvoice {
   get spendings(): Spending[] {
     return this.props.spendings;
   }
+
+  set spendings(data: Spending[]) {
+    this.props.spendings = data;
+  }
 }
