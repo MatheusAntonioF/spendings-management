@@ -8,6 +8,12 @@ import { PrismaService } from '../../database/prisma.service';
 export class CategoryPrismaRepository implements CategoryRepositoryContract {
   constructor(private prisma: PrismaService) {}
 
+  async findAll(): Promise<Category[]> {
+    const prismaCategory = await this.prisma.category.findMany();
+
+    return prismaCategory.map(CategoryMapper.toDomain);
+  }
+
   async create(data: Category): Promise<void> {
     const prismaCategory = CategoryMapper.toPrisma(data);
 

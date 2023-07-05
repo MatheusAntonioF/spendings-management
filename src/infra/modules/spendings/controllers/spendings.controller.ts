@@ -19,8 +19,7 @@ export class SpendingController {
     @Body() body: ProcessCsvSpendingsDTO,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log('🚀 ~ body:', body);
-    await this.processCsvService.execute({
+    return this.processCsvService.execute({
       file,
       keysToMap: body.keysToMap,
       creditCardId: body.creditCardId,

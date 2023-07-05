@@ -2,12 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { SpendingsRepositoryContract } from '../contract/spendings-repository.contract';
 import { Spending, SpendingProps } from '../spending.entity';
 
-interface Input {
-  name: string;
-  price: number;
-  purchaseDate: Date;
-}
-
 @Injectable()
 export class CreateManySpendingsUseCase {
   constructor(
