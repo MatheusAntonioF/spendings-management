@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SpendingController } from './controllers/spendings.controller';
+import { SpendingController } from './controllers/credit-card-invoice.controller';
 import { ProcessCSVService } from './services/process-csv-service';
 import { PrismaModule } from '../database/prisma.module';
 import { CategoryController } from './controllers/category.controller';
@@ -33,4 +33,4 @@ import { GetCreditCardInvoicesUseCase } from 'src/core/domain/credit-card/use-ca
     GetCreditCardInvoicesUseCase,
   ],
 })
-export class SpendingsModule {}
+export class CreditCardInvoiceModule {}
