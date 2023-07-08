@@ -33,6 +33,25 @@ export class CreditCardInvoiceMapper {
     return prismaCreditCardInvoice;
   }
 
+  static toDomain(
+    prismaCreditCardInvoice: PrismaCreditCardInvoiceWithSpendings,
+  ) {
+    const { id, date, createdAt, spendings, creditCard } =
+      prismaCreditCardInvoice;
+
+    const creditCardInvoice = new CreditCardInvoice(
+      {
+        date,
+        createdAt,
+        creditCard: CreditCardMapper.toDomain(creditCard),
+        spendings: spendings.map(SpendingMapper.toDomain),
+      },
+      id,
+    );
+
+    return creditCardInvoice;
+  }
+
   static toHttp(creditCardInvoice: CreditCardInvoice) {
     const { id, date, createdAt, spendings, creditCard } = creditCardInvoice;
 
