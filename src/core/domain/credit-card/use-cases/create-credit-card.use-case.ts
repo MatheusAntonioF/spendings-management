@@ -18,6 +18,7 @@ export class CreateCreditCardUseCase {
 
       return creditCard;
     } catch (error) {
+      console.error(error);
       throw new HttpException(
         creditCardExceptions.FAIL_TO_CREATE_CREDIT_CARD,
         400,

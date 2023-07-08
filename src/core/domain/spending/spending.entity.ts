@@ -1,4 +1,5 @@
-import { ExistentCategoryProps } from './category.entity';
+import { randomUUID } from 'crypto';
+import { Category } from './category.entity';
 import { InstallmentProps } from './installment.entity';
 
 export interface SpendingProps {
@@ -6,7 +7,7 @@ export interface SpendingProps {
   price: number;
   purchaseDate: Date;
   installment: InstallmentProps;
-  category: ExistentCategoryProps;
+  category: Category;
   createdAt?: Date | null;
   creditCardInvoiceId?: string | null;
 }
@@ -16,7 +17,7 @@ export class Spending {
   private props: SpendingProps;
 
   constructor(props: SpendingProps, id?: string) {
-    this._id = id;
+    this._id = id ?? randomUUID();
     this.props = { ...props, createdAt: props.createdAt ?? new Date() };
   }
 
@@ -48,7 +49,7 @@ export class Spending {
     return this.props.createdAt;
   }
 
-  get category(): ExistentCategoryProps {
+  get category(): Category {
     return this.props.category;
   }
 

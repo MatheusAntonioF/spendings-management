@@ -7,6 +7,9 @@ import { CreditCardInvoice } from 'src/core/domain/credit-card/credit-card-invoi
 import { Spending } from 'src/core/domain/spending/spending.entity';
 import { CategoryRepositoryContract } from 'src/core/domain/spending/contract/category-repository.contract';
 import { Category } from 'src/core/domain/spending/category.entity';
+import { CreditCardInvoiceRepositoryContract } from 'src/core/domain/credit-card/contract/credit-card-invoice.repository.contract';
+import { SpendingsRepositoryContract } from 'src/core/domain/spending/contract/spendings-repository.contract';
+import { CreditCardInvoiceMapper } from '../mappers/credit-card-invoice.mapper';
 interface Input {
   keysToMap: string;
   file: Express.Multer.File;
@@ -19,10 +22,14 @@ export class ProcessCSVService {
   private creditCardInvoice: CreditCardInvoice;
 
   constructor(
+    @Inject('SpendingsRepository')
+    private readonly spendingsRepository: SpendingsRepositoryContract,
     @Inject('CreditCardRepository')
     private readonly creditCardRepository: CreditCardRepositoryContract,
     @Inject('CategoryRepository')
     private readonly categoriesRepository: CategoryRepositoryContract,
+    @Inject('CreditCardInvoiceRepository')
+    private readonly creditCardInvoiceRepository: CreditCardInvoiceRepositoryContract,
   ) {}
 
   async execute({ file, keysToMap, creditCardId }: Input) {
@@ -32,7 +39,7 @@ export class ProcessCSVService {
       );
 
       if (!foundCreditCard) {
-        throw new HttpException('Credit card not found', 400);
+        throw new HttpException('Cartão de crédito não encontrado', 400);
       }
 
       this.categories = await this.categoriesRepository.findAll();
@@ -45,23 +52,29 @@ export class ProcessCSVService {
 
       const stream = Readable.from(file.buffer);
 
-      const invoiceToBeCreated = await new Promise<CreditCardInvoice>(
-        (resolve, reject) => {
-          parse(stream, {
-            header: true,
-            worker: true,
-            step: (results: ParseStepResult<Record<string, string>>) => {
-              this.handleStepExecution(results, keysToMap);
-            },
-            error: (error) => reject(error),
-            complete: () => {
-              console.log('completed');
-              resolve(this.creditCardInvoice);
-            },
-          });
-        },
+      await new Promise<void>((resolve, reject) => {
+        parse(stream, {
+          header: true,
+          worker: true,
+          step: (results: ParseStepResult<Record<string, string>>) => {
+            this.handleStepExecution(results, keysToMap);
+          },
+          error: (error) => reject(error),
+          complete: () => {
+            resolve();
+          },
+        });
+      });
+
+      await this.spendingsRepository.createMany(
+        this.creditCardInvoice.spendings,
       );
+
+      await this.creditCardInvoiceRepository.create(this.creditCardInvoice);
+
+      return CreditCardInvoiceMapper.toHttp(this.creditCardInvoice);
     } catch (error) {
+      console.error(error);
       throw new HttpException(error.message, 400);
     }
   }
@@ -81,13 +94,26 @@ export class ProcessCSVService {
     data: Record<string, string>,
     keysToMap: string,
   ): Record<string, any> {
+    const parsedData = Object.entries(data).reduce((accumulator, entry) => {
+      const [key, value] = entry;
+
+      const parsedKey = String(key).replace(/[^a-zA-Z]/g, '');
+
+      accumulator[parsedKey] = value;
+
+      return accumulator;
+    }, {});
+
     const parsedKeys: Record<string, string> = JSON.parse(keysToMap);
 
     const mappedKeys = Object.entries(parsedKeys).reduce(
       (accumulator, currentObj) => {
         const [internalKey, csvKey] = currentObj;
 
-        accumulator[internalKey] = this.parseValue(internalKey, data[csvKey]);
+        accumulator[internalKey] = this.parseValue(
+          internalKey,
+          parsedData[csvKey],
+        );
         return accumulator;
       },
       {},
@@ -98,9 +124,11 @@ export class ProcessCSVService {
 
   parseValue(key: string, value: string) {
     if (key === 'price') {
-      const parsedString = String(value).replace(/[^\d]+/g, '');
+      let parsedString = String(value).split(' ')[1];
 
-      return isNaN(Number(parsedString)) ? 0 : Number(parsedString);
+      parsedString = parsedString.trim().replace(',', '.');
+
+      return isNaN(Number(parsedString)) ? 0 : parseFloat(parsedString);
     }
 
     if (key === 'purchaseDate') {

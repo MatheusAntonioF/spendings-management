@@ -1,3 +1,4 @@
+import { Category } from '../spending/category.entity';
 import { Spending } from '../spending/spending.entity';
 import { CreditCardInvoice } from './credit-card-invoice.entity';
 import { CreditCard } from './credit-card.entity';
@@ -14,7 +15,7 @@ describe('credit card invoice', () => {
       price: 123,
       purchaseDate: new Date(),
       installment: { currentInstallment: 1, totalInstallments: 2 },
-      category: { name: '', color: '' },
+      category: new Category({ name: '', color: '', keyMapping: [] }),
     });
 
     const creditCardInvoice = new CreditCardInvoice({

@@ -8,6 +8,7 @@ import { CreateCategoryUseCase } from 'src/core/domain/spending/use-cases/create
 import { CreditCardModule } from '../credit-card/credit-card.module';
 import { CreateManySpendingsUseCase } from 'src/core/domain/spending/use-cases/create-many-spendings.use-case';
 import { SpendingsPrismaRepository } from './repositories/spendings-prisma.repository';
+import { CreditCardInvoicePrismaRepository } from './repositories/credit-card-invoice.repository';
 
 @Module({
   imports: [PrismaModule, CreditCardModule],
@@ -20,6 +21,10 @@ import { SpendingsPrismaRepository } from './repositories/spendings-prisma.repos
     {
       provide: 'SpendingsRepository',
       useClass: SpendingsPrismaRepository,
+    },
+    {
+      provide: 'CreditCardInvoiceRepository',
+      useClass: CreditCardInvoicePrismaRepository,
     },
     CreateCategoryUseCase,
     ProcessCSVService,

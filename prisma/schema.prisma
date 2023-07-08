@@ -14,16 +14,16 @@ model CreditCard {
   id                String              @id @map("_id")
   name              String
   color             String
-  CreditCardInvoice CreditCardInvoice[]
+  creditCardInvoice CreditCardInvoice[]
   createdAt         DateTime
 
   @@map("credit-cards")
 }
 
 model CreditCardInvoice {
-  id           String     @id @map("_id")
+  id           String      @id @map("_id")
   date         DateTime
-  creditCard   CreditCard @relation(fields: [creditCardId], references: [id])
+  creditCard   CreditCard? @relation(fields: [creditCardId], references: [id])
   creditCardId String
   spendings    Spending[]
   createdAt    DateTime

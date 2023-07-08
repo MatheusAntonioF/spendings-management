@@ -6,6 +6,7 @@ export interface CreditCardInvoiceProps {
   creditCard: CreditCard;
   date: Date;
   spendings: Spending[];
+  createdAt?: Date | null;
 }
 
 export class CreditCardInvoice {
@@ -14,7 +15,7 @@ export class CreditCardInvoice {
 
   constructor(props: CreditCardInvoiceProps, id?: string) {
     this._id = id ?? randomUUID();
-    this.props = props;
+    this.props = { ...props, createdAt: props.createdAt ?? new Date() };
   }
 
   get id(): string {
@@ -31,6 +32,10 @@ export class CreditCardInvoice {
 
   get spendings(): Spending[] {
     return this.props.spendings;
+  }
+
+  get createdAt(): Date | null {
+    return this.props.createdAt;
   }
 
   addSpending(data: Spending) {

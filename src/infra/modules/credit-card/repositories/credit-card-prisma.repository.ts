@@ -18,6 +18,7 @@ class CreditCardPrismaRepository implements CreditCardRepositoryContract {
 
   async create(data: CreditCard): Promise<void> {
     const prismaCreditCard = CreditCardMapper.toPrisma(data);
+
     await this.prisma.creditCard.create({ data: prismaCreditCard });
   }
 
