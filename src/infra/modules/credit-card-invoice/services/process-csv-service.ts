@@ -14,6 +14,7 @@ interface Input {
   keysToMap: string;
   file: Express.Multer.File;
   creditCardId: string;
+  date: Date;
 }
 
 @Injectable()
@@ -32,7 +33,7 @@ export class ProcessCSVService {
     private readonly creditCardInvoiceRepository: CreditCardInvoiceRepositoryContract,
   ) {}
 
-  async execute({ file, keysToMap, creditCardId }: Input) {
+  async execute({ file, keysToMap, creditCardId, date }: Input) {
     try {
       const foundCreditCard = await this.creditCardRepository.findById(
         creditCardId,
@@ -45,7 +46,7 @@ export class ProcessCSVService {
       this.categories = await this.categoriesRepository.findAll();
 
       this.creditCardInvoice = new CreditCardInvoice({
-        date: new Date(),
+        date,
         creditCard: foundCreditCard,
         spendings: [],
       });

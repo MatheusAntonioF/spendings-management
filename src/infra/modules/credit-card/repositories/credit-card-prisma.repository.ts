@@ -8,6 +8,12 @@ import { CreditCardMapper } from '../mappers/credit-card.mapper';
 class CreditCardPrismaRepository implements CreditCardRepositoryContract {
   constructor(private prisma: PrismaService) {}
 
+  async findAll(): Promise<CreditCard[]> {
+    const prismaCreditCards = await this.prisma.creditCard.findMany();
+
+    return prismaCreditCards.map(CreditCardMapper.toDomain);
+  }
+
   async findById(id: string): Promise<CreditCard> {
     const prismaCreditCard = await this.prisma.creditCard.findUnique({
       where: { id },

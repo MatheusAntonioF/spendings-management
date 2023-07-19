@@ -6,4 +6,7 @@ export class ProcessCsvSpendingsDTO {
 
   @IsUUID()
   creditCardId: string;
+
+  @IsNotEmpty()
+  date: Date;
 }

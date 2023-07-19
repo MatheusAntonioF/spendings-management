@@ -42,6 +42,7 @@ export class SpendingController {
       file,
       keysToMap: body.keysToMap,
       creditCardId: body.creditCardId,
+      date: body.date,
     });
   }
 }

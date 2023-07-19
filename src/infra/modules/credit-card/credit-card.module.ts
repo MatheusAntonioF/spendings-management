@@ -4,6 +4,7 @@ import { CreditCardController } from './controllers/credit-card.controller';
 import { CreditCardPrismaRepository } from './repositories/credit-card-prisma.repository';
 import { PrismaModule } from '../database/prisma.module';
 import { DeleteCreditCardUseCase } from 'src/core/domain/credit-card/use-cases/delete-credit-card.use-case';
+import { GetAllCreditCardsUseCase } from 'src/core/domain/credit-card/use-cases/get-all-credit-cards.use-case';
 
 @Module({
   imports: [PrismaModule],
@@ -13,6 +14,7 @@ import { DeleteCreditCardUseCase } from 'src/core/domain/credit-card/use-cases/d
       provide: 'CreditCardRepository',
       useClass: CreditCardPrismaRepository,
     },
+    GetAllCreditCardsUseCase,
     CreateCreditCardUseCase,
     DeleteCreditCardUseCase,
   ],

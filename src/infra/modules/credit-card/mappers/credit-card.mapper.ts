@@ -5,7 +5,12 @@ export class CreditCardMapper {
   static toHttp(creditCard: CreditCard) {
     const { id, name, color, createdAt } = creditCard;
 
-    const creditCardResponse = { id, name, color, createdAt };
+    const creditCardResponse = {
+      id,
+      name,
+      color,
+      createdAt: new Date(createdAt),
+    };
 
     return creditCardResponse;
   }
