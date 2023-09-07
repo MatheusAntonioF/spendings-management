@@ -52,7 +52,7 @@ model Category {
   name       String
   color      String
   keyMapping String[]
-  Spending   Spending[]
+  spendings  Spending[]
   createdAt  DateTime
 
   @@map("categories")

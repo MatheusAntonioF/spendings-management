@@ -15,7 +15,7 @@ import { CreditCardInvoiceMapper } from '../mappers/credit-card-invoice.mapper';
 import { GetCreditCardInvoiceQueriesDTO } from '../dtos/get-credit-card-invoice-queries.dto';
 
 @Controller('spendings')
-export class SpendingController {
+export class CreditCardInvoiceController {
   constructor(
     private readonly getCreditCardInvoiceUseCase: GetCreditCardInvoicesUseCase,
     private readonly processCsvService: ProcessCSVService,
@@ -25,11 +25,15 @@ export class SpendingController {
   async findAll(@Query() { date }: GetCreditCardInvoiceQueriesDTO) {
     const parsedDate = new Date(date);
 
-    const creditCardInvoice = await this.getCreditCardInvoiceUseCase.execute({
-      date: parsedDate,
-    });
+    const { invoices, details } =
+      await this.getCreditCardInvoiceUseCase.execute({
+        date: parsedDate,
+      });
 
-    return CreditCardInvoiceMapper.toHttp(creditCardInvoice);
+    return {
+      invoices: CreditCardInvoiceMapper.toHttp(invoices),
+      details,
+    };
   }
 
   @Post('upload')
