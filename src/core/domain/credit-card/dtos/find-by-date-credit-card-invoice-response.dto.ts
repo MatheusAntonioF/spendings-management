@@ -6,6 +6,6 @@ interface CategoryMostExpensive {
 }
 
 export interface FindByDateCreditCardInvoiceResponseDTO {
-  invoice: CreditCardInvoice;
+  invoices: CreditCardInvoice[];
   categoryMostExpensive: CategoryMostExpensive;
 }

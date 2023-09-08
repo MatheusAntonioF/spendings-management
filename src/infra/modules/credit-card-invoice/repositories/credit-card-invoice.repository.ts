@@ -20,7 +20,7 @@ export class CreditCardInvoicePrismaRepository
     const endDate = endOfMonth(date);
 
     const prismaCreditCardInvoice =
-      await this.prisma.creditCardInvoice.findFirst({
+      await this.prisma.creditCardInvoice.findMany({
         where: {
           date: {
             gt: startDate,
@@ -37,7 +37,13 @@ export class CreditCardInvoicePrismaRepository
         },
       });
 
-    const spendingIDs = prismaCreditCardInvoice.spendings.map(({ id }) => id);
+    const spendingIDs = [];
+
+    for (const invoice of prismaCreditCardInvoice) {
+      for (const spending of invoice.spendings) {
+        spendingIDs.push(spending.id);
+      }
+    }
 
     const groupedCategoriesBySumPrice = await this.prisma.spending.groupBy({
       by: ['categoryId'],
@@ -72,7 +78,7 @@ export class CreditCardInvoicePrismaRepository
     )[0];
 
     return {
-      invoice: CreditCardInvoiceMapper.toDomain(prismaCreditCardInvoice),
+      invoices: prismaCreditCardInvoice.map(CreditCardInvoiceMapper.toDomain),
       categoryMostExpensive: {
         value: categoryIdMostExpensive._sum.price,
         categoryId: categoryIdMostExpensive.categoryId,

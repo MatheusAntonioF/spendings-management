@@ -10,7 +10,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProcessCSVService } from '../services/process-csv-service';
 import { ProcessCsvSpendingsDTO } from '../dtos/process-csv-spendings.dto';
-import { GetCreditCardInvoicesUseCase } from 'src/core/domain/credit-card/use-cases/get-credit-card-invoices.use-case';
+import {
+  Details,
+  GetCreditCardInvoicesUseCase,
+} from 'src/core/domain/credit-card/use-cases/get-credit-card-invoices.use-case';
 import { CreditCardInvoiceMapper } from '../mappers/credit-card-invoice.mapper';
 import { GetCreditCardInvoiceQueriesDTO } from '../dtos/get-credit-card-invoice-queries.dto';
 
@@ -22,7 +25,9 @@ export class CreditCardInvoiceController {
   ) {}
 
   @Get()
-  async findAll(@Query() { date }: GetCreditCardInvoiceQueriesDTO) {
+  async findAll(
+    @Query() { date }: GetCreditCardInvoiceQueriesDTO,
+  ): Promise<{ details: Details; invoices: Record<string, any> }> {
     const parsedDate = new Date(date);
 
     const { invoices, details } =
@@ -31,7 +36,7 @@ export class CreditCardInvoiceController {
       });
 
     return {
-      invoices: CreditCardInvoiceMapper.toHttp(invoices),
+      invoices: invoices.map(CreditCardInvoiceMapper.toHttp),
       details,
     };
   }

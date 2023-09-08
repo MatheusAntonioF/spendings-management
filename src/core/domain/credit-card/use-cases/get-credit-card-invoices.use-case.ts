@@ -3,16 +3,18 @@ import { CreditCardInvoiceRepositoryContract } from '../contract/credit-card-inv
 import { FindByDateCreditCardInvoiceDTO } from '../dtos/find-by-date-credit-card-invoice.dto';
 import { CreditCardInvoice } from '../credit-card-invoice.entity';
 
-interface GetCreditCardInvoicesUseCaseResponse {
-  details: {
-    total: number;
-    average: number;
-    categoryMostExpensive: {
-      name: string;
-      value: number;
-    };
+export interface Details {
+  total: number;
+  average: number;
+  categoryMostExpensive: {
+    name: string;
+    value: number;
   };
-  invoices: CreditCardInvoice;
+}
+
+export interface GetCreditCardInvoicesUseCaseResponse {
+  details: Details;
+  invoices: CreditCardInvoice[];
 }
 
 @Injectable()
@@ -26,21 +28,25 @@ export class GetCreditCardInvoicesUseCase {
     date,
   }: FindByDateCreditCardInvoiceDTO): Promise<GetCreditCardInvoicesUseCaseResponse> {
     try {
-      const { categoryMostExpensive, invoice } =
+      const { categoryMostExpensive, invoices } =
         await this.creditCardInvoiceRepository.findByDate({ date });
 
       let total = 0;
       let categoryMostExpensiveName = '';
+      let spendingsAmount = 0;
 
-      for (const spending of invoice.spendings) {
-        total += spending.price;
+      for (const invoice of invoices) {
+        for (const spending of invoice.spendings) {
+          total += spending.price;
+          spendingsAmount += 1;
 
-        if (spending.category.id === categoryMostExpensive.categoryId) {
-          categoryMostExpensiveName = spending.category.name;
+          if (spending.category.id === categoryMostExpensive.categoryId) {
+            categoryMostExpensiveName = spending.category.name;
+          }
         }
       }
 
-      const priceAverage = total / invoice.spendings.length;
+      const priceAverage = total / spendingsAmount;
 
       return {
         details: {
@@ -51,7 +57,7 @@ export class GetCreditCardInvoicesUseCase {
             value: categoryMostExpensive.value,
           },
         },
-        invoices: invoice,
+        invoices,
       };
     } catch (error) {
       console.error(error);
